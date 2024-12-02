@@ -25,11 +25,11 @@ class Navbarwidget extends StatefulWidget {
 class _NavbarwidgetState extends State<Navbarwidget> {
   int _currentIndex = 0;
 
-  final List<Widget> _children = [
-    Homepage(),
-    Cartpage(),
-    Addpage(),
-  ];
+    final List<Widget> _children = [
+      Homepage(),
+      Cartpage(),
+      Addpage(),
+    ];
 
   void onBarTapped(int index) {
     setState(() {
