@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:starbahk_mart/Pages/AddData.dart';
-import 'package:starbahk_mart/Widgets/AppBarWidget.dart';
+// import 'package:starbahk_mart/Widgets/AppBarWidget.dart';
 import 'package:starbahk_mart/widgets/AppBarWidget2.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class Cartpage extends StatefulWidget {
   const Cartpage({super.key});
@@ -36,7 +37,7 @@ class _CardpageState extends State<Cartpage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  AppBarwidget(),
+                  AppBarWidget2(),
                   Padding(
                     padding: EdgeInsets.only(
                       top: screenHeight * 0.02,

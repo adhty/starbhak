@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:starbahk_mart/Widgets/AppBarWidget.dart';
+import 'package:starbahk_mart/widgets/AppBarWidget2.dart';
 import '../Widgets/CategoriesWidget.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -26,9 +27,8 @@ class _HomepageState extends State<Homepage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          
           // AppBar
-          AppBarwidget(),
+          AppBarWidget(),
 
           Padding(
             padding: EdgeInsets.only(
@@ -66,7 +66,8 @@ class _HomepageState extends State<Homepage> {
           Expanded(
             child: FutureBuilder<List<dynamic>>(
               future: fetchData(),
-              builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
+              builder: (BuildContext context,
+                  AsyncSnapshot<List<dynamic>> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
@@ -83,7 +84,9 @@ class _HomepageState extends State<Homepage> {
                       vertical: screenHeight * 0.01,
                     ),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: screenWidth < 600 ? 2 : 4, // 2 kolom untuk layar kecil, 4 untuk besar
+                      crossAxisCount: screenWidth < 600
+                          ? 2
+                          : 4, // 2 kolom untuk layar kecil, 4 untuk besar
                       crossAxisSpacing: screenWidth * 0.01,
                       mainAxisSpacing: screenHeight * 0.03,
                       childAspectRatio: 0.75, // Rasio lebar dan tinggi item
@@ -105,15 +108,39 @@ class _HomepageState extends State<Homepage> {
                           ],
                         ),
                         child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.01),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: screenWidth * 0.01),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              // Membungkus elemen dalam kotak lebih kecil
                               Container(
+                                width: screenWidth *
+                                    0.50, // Lebar kotak diperbesar
+                                height: screenHeight *
+                                    0.20, // Tinggi kotak diperbesar
                                 alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  color: Colors.white, // Warna latar belakang
+                                  borderRadius: BorderRadius.circular(
+                                      8), // Sudut melengkung
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey
+                                          .withOpacity(0.3), // Shadow
+                                      blurRadius: 4,
+                                      offset: Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
                                 child: Image.asset(
                                   'images/burger.jpeg',
-                                  height: screenHeight * 0.10,
+                                  width: screenWidth *
+                                      0.18, // Lebar gambar lebih besar
+                                  height: screenHeight *
+                                      0.15, // Tinggi gambar lebih besar
+                                  fit: BoxFit
+                                      .contain, // Gambar tetap proporsional
                                 ),
                               ),
                               SizedBox(height: screenHeight * 0.01),
@@ -126,7 +153,8 @@ class _HomepageState extends State<Homepage> {
                               ),
                               SizedBox(height: screenHeight * 0.01),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     'Rp. ${item['price'] ?? '0'}',
@@ -139,7 +167,7 @@ class _HomepageState extends State<Homepage> {
                                   Icon(
                                     Icons.add_circle_outline,
                                     color: Color.fromARGB(217, 227, 111, 10),
-                                    size: screenWidth * 0.03,
+                                    size: screenWidth * 0.05,
                                   ),
                                 ],
                               ),

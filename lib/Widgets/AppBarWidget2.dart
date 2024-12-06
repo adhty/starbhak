@@ -1,84 +1,71 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:starbahk_mart/Widgets/NavBarWidget.dart';
+
 
 class AppBarWidget2 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // Mendapatkan lebar layar
+    // Mendapatkan ukuran layar
     final screenWidth = MediaQuery.of(context).size.width;
-
-    // Menentukan ukuran padding dan ikon berdasarkan ukuran layar
-    double getPadding() {
-      if (screenWidth < 600) return 10; // Mobile
-      if (screenWidth < 900) return 12; // Tablet
-      return 15; // Desktop
-    }
-
-    double getIconSize() {
-      if (screenWidth < 600) return 24; // Mobile
-      if (screenWidth < 900) return 28; // Tablet
-      return 32; // Desktop
-    }
+    final screenHeight = MediaQuery.of(context).size.height;
 
     return Padding(
       padding: EdgeInsets.symmetric(
-        vertical: getPadding(),
-        horizontal: getPadding(),
+        vertical: screenHeight * 0.02,
+        horizontal: screenWidth * 0.04,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // Menu Icon
           InkWell(
-            onTap: () {
-              // Tambahkan logika untuk menu
-            },
+            onTap: () {},
             child: Container(
-              padding: EdgeInsets.all(getPadding()),
+                padding: EdgeInsets.all(screenWidth * 0.02),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(screenWidth * 0.05),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey,
+                        spreadRadius: 2,
+                        blurRadius: 10,
+                        offset: Offset(0, 3),
+                      )
+                    ]),
+                child: IconButton(
+                  icon: Icon(Icons.arrow_back),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => NavBarWidget(),
+                      ),
+                    );
+                  },
+                )),
+          ),
+          InkWell(
+            onTap: () {},
+            child: Container(
+              padding: EdgeInsets.all(screenWidth * 0.02),
               decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(29),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: 2,
-                    blurRadius: 10,
-                    offset: Offset(0, 3),
-                  ),
-                ],
-              ),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(screenWidth * 0.05),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey,
+                      spreadRadius: 2,
+                      blurRadius: 10,
+                      offset: Offset(0, 3),
+                    )
+                  ]),
               child: Icon(
-                CupertinoIcons.bars,
-                size: getIconSize(),
+                Icons.account_circle,
+                size: screenWidth * 0.07,
               ),
             ),
-          ),
-
-          // Profile Icon
-          InkWell(
-            onTap: () {
-              // Tambahkan logika untuk profil
-            },
-            child: Container(
-              padding: EdgeInsets.all(getPadding()),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(29),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: 2,
-                    blurRadius: 10,
-                    offset: Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: Icon(
-                CupertinoIcons.person,
-                size: getIconSize(),
-              ),
-            ),
-          ),
+          )
         ],
       ),
     );

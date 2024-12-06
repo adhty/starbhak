@@ -1,43 +1,29 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class AppBarwidget extends StatelessWidget {
+class AppBarWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // Mendapatkan lebar layar
+    // Mendapatkan ukuran layar
     final screenWidth = MediaQuery.of(context).size.width;
-
-    // Menentukan ukuran padding dan ikon berdasarkan ukuran layar
-    double getPadding() {
-      if (screenWidth < 600) return 10; // Mobile
-      if (screenWidth < 900) return 12; // Tablet
-      return 15; // Desktop
-    }
-
-    double getIconSize() {
-      if (screenWidth < 600) return 24; // Mobile
-      if (screenWidth < 900) return 28; // Tablet
-      return 32; // Desktop
-    }
+    final screenHeight = MediaQuery.of(context).size.height;
 
     return Padding(
       padding: EdgeInsets.symmetric(
-        vertical: getPadding(),
-        horizontal: getPadding(),
+        vertical: screenHeight * 0.02, // Padding vertikal responsif
+        horizontal: screenWidth * 0.04, // Padding horizontal responsif
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // Menu Icon
+          // Tombol menu
           InkWell(
-            onTap: () {
-              // Tambahkan logika untuk menu
-            },
+            onTap: () {},
             child: Container(
-              padding: EdgeInsets.all(getPadding()),
+              padding: EdgeInsets.all(screenWidth * 0.02), // Padding responsif
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(29),
+                borderRadius: BorderRadius.circular(screenWidth * 0.05), // Radius responsif
                 boxShadow: [
                   BoxShadow(
                     color: Colors.grey.withOpacity(0.5),
@@ -49,21 +35,19 @@ class AppBarwidget extends StatelessWidget {
               ),
               child: Icon(
                 CupertinoIcons.bars,
-                size: getIconSize(),
+                size: screenWidth * 0.07, // Ukuran ikon responsif
               ),
             ),
           ),
 
-          // Profile Icon
+          // Tombol profil
           InkWell(
-            onTap: () {
-              // Tambahkan logika untuk profil
-            },
+            onTap: () {},
             child: Container(
-              padding: EdgeInsets.all(getPadding()),
+              padding: EdgeInsets.all(screenWidth * 0.02), // Padding responsif
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(29),
+                borderRadius: BorderRadius.circular(screenWidth * 0.05), // Radius responsif
                 boxShadow: [
                   BoxShadow(
                     color: Colors.grey.withOpacity(0.5),
@@ -74,8 +58,8 @@ class AppBarwidget extends StatelessWidget {
                 ],
               ),
               child: Icon(
-                CupertinoIcons.person,
-                size: getIconSize(),
+                Icons.account_circle,
+                size: screenWidth * 0.07, // Ukuran ikon responsif
               ),
             ),
           ),

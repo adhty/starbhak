@@ -1,10 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:starbahk_mart/Widgets/AppBarWidget.dart';
+import 'package:flutter/cupertino.dart';
+// import 'package:starbahk_mart/Widgets/AppBarWidget.dart';
 import 'package:starbahk_mart/Widgets/AppBarWidget2.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'adddata.dart';
 
-class Addpage extends StatelessWidget {
+
+final supabase = Supabase.instance.client;
+
+
+class Addpage extends StatefulWidget {
+  const Addpage({super.key});
+
+  @override
+  State<Addpage> createState() => _AddpageState();
+}
+
+class _AddpageState extends State<Addpage> {
+  Future<List<dynamic>> fetchData() async {
+    final List<Map<String, dynamic>> response =
+        await supabase.from('starbhak_mart').select('*');
+    return response as List<dynamic>;
+  }
+
+  Future<void> deleteData(int id) async {
+    await supabase.from('starbhak_mart').delete().eq('id', id);
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     // Mendapatkan ukuran layar
@@ -14,39 +37,41 @@ class Addpage extends StatelessWidget {
     return Scaffold(
       body: ListView(
         children: [
-          // Button Add
           SingleChildScrollView(
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.03),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  AppBarwidget(),
+                  AppBarWidget2(),
 
-                  // Add Data
+                  // Tombol Tambah Data
                   Row(
                     children: [
                       ElevatedButton(
-                        child: Row(children: [
-                          Text(
-                            'ADD',
-                            style: TextStyle(
-                              fontSize: screenWidth * 0.04,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
+                        child: Row(
+                          children: [
+                            Text(
+                              'ADD',
+                              style: TextStyle(
+                                fontSize: screenWidth * 0.04,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          SizedBox(width: screenWidth * 0.01),
-                          Icon(
-                            Icons.add,
-                            color: Colors.white,
-                            size: screenWidth * 0.05,
-                          ),
-                        ]),
+                            SizedBox(width: screenWidth * 0.01),
+                            Icon(
+                              Icons.add,
+                              color: Colors.white,
+                              size: screenWidth * 0.05,
+                            ),
+                          ],
+                        ),
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => Adddata()),
+                            MaterialPageRoute(
+                                builder: (context) => Adddata()),
                           );
                         },
                         style: ElevatedButton.styleFrom(
@@ -67,405 +92,129 @@ class Addpage extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          "Photo",
-                          style: TextStyle(fontSize: screenWidth * 0.04),
+                        Expanded(
+                          flex: 2,
+                          child: Text(
+                            "Photo",
+                            style: TextStyle(fontSize: screenWidth * 0.04),
+                            textAlign: TextAlign.center,
+                          ),
                         ),
-                        Text(
-                          "Nama Produk",
-                          style: TextStyle(fontSize: screenWidth * 0.04),
+                        Expanded(
+                          flex: 3,
+                          child: Text(
+                            "Nama Produk",
+                            style: TextStyle(fontSize: screenWidth * 0.04),
+                            textAlign: TextAlign.center,
+                          ),
                         ),
-                        Text(
-                          "Harga",
-                          style: TextStyle(fontSize: screenWidth * 0.04),
+                        Expanded(
+                          flex: 2,
+                          child: Text(
+                            "Harga",
+                            style: TextStyle(fontSize: screenWidth * 0.04),
+                            textAlign: TextAlign.center,
+                          ),
                         ),
-                        Text(
-                          "Aksi",
-                          style: TextStyle(fontSize: screenWidth * 0.04),
+                        Expanded(
+                          flex: 1,
+                          child: Text(
+                            "Aksi",
+                            style: TextStyle(fontSize: screenWidth * 0.04),
+                            textAlign: TextAlign.center,
+                          ),
                         ),
                       ],
                     ),
                   ),
-                  Divider(color: Colors.black),
+                  Divider(
+                    color: Colors.black,
+                  ),
 
                   // Kotak Produk
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: screenHeight * 0.01),
-                    child: Container(
-                      width: double.infinity,
-                      height: screenHeight * 0.15,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(screenWidth * 0.03),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.5),
-                            spreadRadius: 3,
-                            blurRadius: 10,
-                            offset: Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.all(screenWidth * 0.02),
-                            child: Image.asset(
-                              'images/burger.jpeg',
-                              height: screenHeight * 0.12,
-                              width: screenWidth * 0.3,
-                            ),
-                          ),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      'Burger',
-                                      style: TextStyle(
-                                          fontSize: screenWidth * 0.045,
-                                          fontWeight: FontWeight.bold),
+                  FutureBuilder<List<dynamic>>(
+                    future: fetchData(),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<List<dynamic>> snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return const Text('No data found');
+                      } else {
+                        final List<dynamic> data = snapshot.data!;
+                        return Column(
+                          children: data.map((item) {
+                             final imageUrl = item['image_url'] ??
+                            'https://via.placeholder.com/150';
+                            return Padding(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: screenHeight * 0.01),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    flex: 2,
+                                    child: Padding(
+                                      padding:
+                                          EdgeInsets.all(screenWidth * 0.02),
+                                      child: Image.network(
+                                        imageUrl,
+                                        errorBuilder:
+                                        (context, error, stackTrace) =>
+                                        const Icon(Icons.broken_image),
+                                      )
+                                      
                                     ),
-                                    Text(
-                                      'Rp. 100.000',
+                                  ),
+                                  Expanded(
+                                    flex: 3,
+                                    child: Text(
+                                      item['name'] ?? 'Tidak ada nama',
                                       style: TextStyle(
+                                        color: Colors.black,
                                         fontSize: screenWidth * 0.04,
+                                        fontWeight: FontWeight.bold,
                                       ),
+                                      textAlign: TextAlign.center,
                                     ),
-                                    IconButton(
-                                      icon: Icon(
-                                        Icons.delete,
-                                        color: Colors.red,
-                                        size: screenWidth * 0.05,
-                                      ),
-                                      onPressed: () {
-                                        // Logika hapus item
-                                        showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return AlertDialog(
-                                              title: Text("Konfirmasi"),
-                                              content: Text(
-                                                  "Apakah Anda yakin ingin menghapus item ini?"),
-                                              actions: [
-                                                TextButton(
-                                                  child: Text("Batal"),
-                                                  onPressed: () {
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                ),
-                                                TextButton(
-                                                  child: Text("Hapus"),
-                                                  onPressed: () {
-                                                    // Tambahkan logika penghapusan di sini
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                ),
-                                              ],
-                                            );
-                                          },
-                                        );
-                                      },
-                                    )
-                                  ],
-                                ),
-                                
-                              ],
-                            ),
-                          ),
-                          
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: screenHeight * 0.01),
-                    child: Container(
-                      width: double.infinity,
-                      height: screenHeight * 0.15,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(screenWidth * 0.03),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.5),
-                            spreadRadius: 3,
-                            blurRadius: 10,
-                            offset: Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.all(screenWidth * 0.02),
-                            child: Image.asset(
-                              'images/es krim.jpeg',
-                              height: screenHeight * 0.12,
-                              width: screenWidth * 0.3,
-                            ),
-                          ),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      'Es cream ',
+                                  ),
+                                  Expanded(
+                                    flex: 2,
+                                    child: Text(
+                                      "Rp. ${item['price'] ?? '0'}",
                                       style: TextStyle(
-                                          fontSize: screenWidth * 0.035,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(
-                                      'Rp. 30.000',
-                                      style: TextStyle(
+                                        color: Colors.black,
                                         fontSize: screenWidth * 0.04,
+                                        fontWeight: FontWeight.bold,
                                       ),
+                                      textAlign: TextAlign.center,
                                     ),
-                                    IconButton(
+                                  ),
+                                  Expanded(
+                                    flex: 1,
+                                    child: IconButton(
                                       icon: Icon(
-                                        Icons.delete,
+                                        CupertinoIcons.trash,
+                                        size: screenWidth * 0.06,
                                         color: Colors.red,
-                                        size: screenWidth * 0.05,
                                       ),
-                                      onPressed: () {
-                                        // Logika hapus item
-                                        showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return AlertDialog(
-                                              title: Text("Konfirmasi"),
-                                              content: Text(
-                                                  "Apakah Anda yakin ingin menghapus item ini?"),
-                                              actions: [
-                                                TextButton(
-                                                  child: Text("Batal"),
-                                                  onPressed: () {
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                ),
-                                                TextButton(
-                                                  child: Text("Hapus"),
-                                                  onPressed: () {
-                                                    // Tambahkan logika penghapusan di sini
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                ),
-                                              ],
-                                            );
-                                          },
-                                        );
+                                      onPressed: () async {
+                                        final id = item['id'];
+                                        await deleteData(id);
                                       },
-                                    )
-                                  ],
-                                ),
-                                
-                              ],
-                            ),
-                          ),
-                          
-                        ],
-                      ),
-                    ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                        );
+                      }
+                    },
                   ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: screenHeight * 0.01),
-                    child: Container(
-                      width: double.infinity,
-                      height: screenHeight * 0.15,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(screenWidth * 0.03),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.5),
-                            spreadRadius: 3,
-                            blurRadius: 10,
-                            offset: Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.all(screenWidth * 0.02),
-                            child: Image.asset(
-                              'images/pizza.jpeg',
-                              height: screenHeight * 0.12,
-                              width: screenWidth * 0.3,
-                            ),
-                          ),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      'Hots Pizza',
-                                      style: TextStyle(
-                                          fontSize: screenWidth * 0.045,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(
-                                      'Rp. 135.000',
-                                      style: TextStyle(
-                                        fontSize: screenWidth * 0.04,
-                                      ),
-                                    ),
-                                    IconButton(
-                                      icon: Icon(
-                                        Icons.delete,
-                                        color: Colors.red,
-                                        size: screenWidth * 0.05,
-                                      ),
-                                      onPressed: () {
-                                        // Logika hapus item
-                                        showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return AlertDialog(
-                                              title: Text("Konfirmasi"),
-                                              content: Text(
-                                                  "Apakah Anda yakin ingin menghapus item ini?"),
-                                              actions: [
-                                                TextButton(
-                                                  child: Text("Batal"),
-                                                  onPressed: () {
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                ),
-                                                TextButton(
-                                                  child: Text("Hapus"),
-                                                  onPressed: () {
-                                                    // Tambahkan logika penghapusan di sini
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                ),
-                                              ],
-                                            );
-                                          },
-                                        );
-                                      },
-                                    )
-                                  ],
-                                ),
-                                
-                              ],
-                            ),
-                          ),
-                          
-                        ],
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: screenHeight * 0.01),
-                    child: Container(
-                      width: double.infinity,
-                      height: screenHeight * 0.15,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(screenWidth * 0.03),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.5),
-                            spreadRadius: 3,
-                            blurRadius: 10,
-                            offset: Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.all(screenWidth * 0.02),
-                            child: Image.asset(
-                              'images/spaghetti.jpeg',
-                              height: screenHeight * 0.12,
-                              width: screenWidth * 0.3,
-                            ),
-                          ),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      'Hots Spaghetti',
-                                      style: TextStyle(
-                                          fontSize: screenWidth * 0.035,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(
-                                      'Rp. 85.000',
-                                      style: TextStyle(
-                                        fontSize: screenWidth * 0.04,
-                                      ),
-                                    ),
-                                    IconButton(
-                                      icon: Icon(
-                                        Icons.delete,
-                                        color: Colors.red,
-                                        size: screenWidth * 0.05,
-                                      ),
-                                      onPressed: () {
-                                        // Logika hapus item
-                                        showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return AlertDialog(
-                                              title: Text("Konfirmasi"),
-                                              content: Text(
-                                                  "Apakah Anda yakin ingin menghapus item ini?"),
-                                              actions: [
-                                                TextButton(
-                                                  child: Text("Batal"),
-                                                  onPressed: () {
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                ),
-                                                TextButton(
-                                                  child: Text("Hapus"),
-                                                  onPressed: () {
-                                                    // Tambahkan logika penghapusan di sini
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                ),
-                                              ],
-                                            );
-                                          },
-                                        );
-                                      },
-                                    )
-                                  ],
-                                ),
-                                
-                              ],
-                            ),
-                          ),
-                          
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  Divider(color: Colors.black),
-
-                  // Tambahkan Kotak Produk lainnya jika diperlukan
                 ],
               ),
             ),

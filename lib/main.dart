@@ -5,13 +5,11 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 
-
+const supabaseUrl =  'https://hzscqpenvagzbhxlemwt.supabase.co';
+const supabaseKey =   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh6c2NxcGVudmFnemJoeGxlbXd0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzA5NjU5MjAsImV4cCI6MjA0NjU0MTkyMH0.zMfFzjy30HlNQPq-OixXmR2jryKn5Vag__84NZMChEg';
 
 Future<void> main() async {
-    const url= 'https://hzscqpenvagzbhxlemwt.supabase.co';
-const anonKey ='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh6c2NxcGVudmFnemJoeGxlbXd0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzA5NjU5MjAsImV4cCI6MjA0NjU0MTkyMH0.zMfFzjy30HlNQPq-OixXmR2jryKn5Vag__84NZMChEg';
-
-await Supabase.initialize(url: url, anonKey: anonKey);
+  await Supabase.initialize(url: supabaseUrl, anonKey:  supabaseKey);
   runApp(MyApp());
 }
 

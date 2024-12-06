@@ -1,9 +1,12 @@
+import 'dart:io'; 
 import 'package:flutter/material.dart';
 import 'package:starbahk_mart/Widgets/AppBarWidget.dart';
 import 'package:starbahk_mart/Widgets/NavBarWidget.dart';
 import 'package:starbahk_mart/widgets/AppBarWidget2.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
+final supabase = Supabase.instance.client;
 
 class Adddata extends StatelessWidget {
   @override
@@ -15,8 +18,6 @@ class Adddata extends StatelessWidget {
   }
 }
 
-final supabase = Supabase.instance.client;
-
 class ProductForm extends StatefulWidget {
   @override
   _ProductFormState createState() => _ProductFormState();
@@ -24,71 +25,89 @@ class ProductForm extends StatefulWidget {
 
 class _ProductFormState extends State<ProductForm> {
   String _katagori = 'Makanan';
-  XFile? _imageFile;
-
+  // XFile? _imageFile;
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
+  File? _imageFile;
 
-  Future<void> _pickImage() async {
-    final ImagePicker _picker = ImagePicker();
-    final XFile? selectedImage =
-        await _picker.pickImage(source: ImageSource.gallery);
-    setState(() {
-      _imageFile = selectedImage;
-    });
+  Future pickImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+
+    if (image != null) {
+      setState(() {
+        _imageFile = File(image.path);
+      });
+    }
   }
+
+  Future<String?> uploadImage(String path) async {
+    if (_imageFile == null) return null;
+
+    final fileName = DateTime.now().millisecondsSinceEpoch;
+    final uploadPath = 'uploads/$fileName';
+
+    final response =
+        await supabase.storage.from('Foodaas').upload(uploadPath, _imageFile!);
+
+    return supabase.storage.from('Foodaas').getPublicUrl(uploadPath);
+  }
+
+  Future<List<dynamic>> fetchData() async {
+    final response = await supabase.from('Foodaas').select('*');
+    return response as List<dynamic>;
+  }
+
+  
 
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
 
-    double getPadding() {
-      if (screenWidth < 600) return 16; // Mobile
-      if (screenWidth < 1024) return 32; // Tablet
-      return 64; // Desktop
-    }
-
-    return Scaffold(
+     return Scaffold(
       body: ListView(
         children: [
-          // AppBar
-          AppBarwidget(),
+          AppBarWidget2(),
           Padding(
-            padding: EdgeInsets.all(getPadding()),
+            padding: EdgeInsets.all(screenWidth * 0.04),
             child: Center(
               child: Container(
-                width: screenWidth < 600
-                    ? screenWidth
-                    : screenWidth * 0.7, // Responsif untuk Tablet/Desktop
-                padding: EdgeInsets.all(getPadding()),
+                padding: EdgeInsets.all(screenWidth * 0.04),
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(30),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 10,
-                      spreadRadius: 2,
-                      offset: Offset(0, 4),
-                    ),
-                  ],
-                ),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(screenWidth * 0.08),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 10,
+                        spreadRadius: 2,
+                        offset: Offset(0, 4),
+                      ),
+                    ]),
                 child: Form(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      Text(
+                        'ADD NEW DATA',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: screenWidth * 0.045),
+                      ),
+                      SizedBox(height: screenHeight * 0.03),
+
                       // Nama Produk
                       TextField(
                         controller: _nameController,
                         decoration: InputDecoration(
-                          labelText: 'Nama Produk',
-                          hintText: 'Masukan Nama Produk',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                        ),
+                            labelText: 'Nama Produk',
+                            hintText: 'Masukan Nama Produk',
+                            border: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.circular(screenWidth * 0.05))),
                       ),
-                      SizedBox(height: 20),
+                      SizedBox(height: screenHeight * 0.03),
 
                       // Harga Field
                       TextField(
@@ -97,18 +116,20 @@ class _ProductFormState extends State<ProductForm> {
                           labelText: 'Harga',
                           hintText: 'Masukan Harga',
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius:
+                                BorderRadius.circular(screenWidth * 0.05),
                           ),
                         ),
                       ),
-                      SizedBox(height: 16),
+                      SizedBox(height: screenHeight * 0.03),
 
                       // Kategori Produk Dropdown
                       DropdownButtonFormField<String>(
                         decoration: InputDecoration(
                           labelText: 'Kategori produk',
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius:
+                                BorderRadius.circular(screenWidth * 0.05),
                           ),
                         ),
                         value: 'Makanan',
@@ -123,83 +144,93 @@ class _ProductFormState extends State<ProductForm> {
                           ),
                         ],
                         onChanged: (value) {
-                          setState(() {
-                            _katagori = value!;
-                          });
+                          // Handle dropdown change
                         },
                       ),
-                      SizedBox(height: 16),
+                      SizedBox(height: screenHeight * 0.03),
 
-                      // Image Picker Field
+                      // Image Picker Field (placeholder)
                       GestureDetector(
-                        onTap: _pickImage,
                         child: Container(
                           padding: EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 15,
+                            horizontal: screenWidth * 0.03,
+                            vertical: screenHeight * 0.015,
                           ),
                           decoration: BoxDecoration(
                             border: Border.all(color: Colors.grey),
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius:
+                                BorderRadius.circular(screenWidth * 0.05),
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                _imageFile == null
-                                    ? 'Pilih Gambar'
-                                    : 'Gambar Terpilih',
+                              _imageFile != null
+                                  ? Flexible(
+                                      child: Image.file(
+                                        _imageFile!,
+                                        width: screenWidth * 0.3,
+                                        height: screenHeight * 0.15,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    )
+                                  : const Text("No image selected"),
+                              ElevatedButton(
+                                onPressed: pickImage,
+                                child: const Text("Add Image"),
                               ),
-                              Icon(Icons.image),
                             ],
                           ),
                         ),
                       ),
-                      SizedBox(height: 16),
+                      SizedBox(height: screenHeight * 0.05),
 
-                      // Submit Button
+                      // Button
                       ElevatedButton(
                         onPressed: () async {
                           final name = _nameController.text;
                           final price = _priceController.text;
 
-                          // Kirim Data ke Supabase
+                          var imageUrl = await uploadImage('uploads');
+                          if (imageUrl == null) return;
+
                           await supabase.from('starbhak_mart').insert({
                             'name': name,
                             'price': price,
-                            'kategori': _katagori,
+                            'image_url': imageUrl,
                           });
 
-                          // Navigasi ke halaman lain
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => Navbarwidget(),
+                              builder: (context) => NavBarWidget(),
                             ),
                           );
-
-                          // Reset State
-                          setState(() {});
-                          _nameController.clear();
-                          _priceController.clear();
                         },
                         style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue,
                           padding: EdgeInsets.symmetric(
-                            horizontal: 50,
-                            vertical: 15,
+                            horizontal: screenWidth * 0.3,
+                            vertical: screenHeight * 0.02,
                           ),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
+                            borderRadius:
+                                BorderRadius.circular(screenWidth * 0.05),
                           ),
                         ),
-                        child: Text('Submit', style: TextStyle(fontSize: 16)),
+                        child: Text(
+                          'Submit',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: screenWidth * 0.045,
+                              fontWeight: FontWeight.bold),
+                        ),
                       ),
                     ],
                   ),
                 ),
               ),
             ),
-          ),
+          )
         ],
       ),
     );
