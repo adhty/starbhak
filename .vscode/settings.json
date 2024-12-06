@@ -1,3 +1,6 @@
 {
-    "java.configuration.updateBuildConfiguration": "interactive"
+    "java.configuration.updateBuildConfiguration": "interactive",
+    "cmake.options.statusBarVisibility": "hidden",
+    "cmake.useCMakePresets": "always",
+    "cmake.sourceDirectory": "C:/Starmard/starbahk_mart/linux"
 }
